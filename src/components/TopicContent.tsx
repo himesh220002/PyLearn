@@ -94,7 +94,7 @@ export default function TopicContent({ topic, prevTopic, nextTopic }: TopicConte
     };
 
     return (
-        <div className="max-w-[1600px] mx-auto py-12 px-4 sm:px-6 lg:px-12 bg-zinc-50/50 dark:bg-zinc-950/20 min-h-screen">
+        <div className="max-w-[1600px] mx-auto pt-24 py-12 px-4 sm:px-6 lg:px-12 bg-zinc-50/50 dark:bg-zinc-950/20 min-h-screen">
             <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
