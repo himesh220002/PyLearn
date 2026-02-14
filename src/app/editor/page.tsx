@@ -28,21 +28,35 @@ function EditorContent() {
   const [hintsRevealed, setHintsRevealed] = useState(0);
   const [showHints, setShowHints] = useState(false);
   const [testResults, setTestResults] = useState<{ passed: number; total: number } | null>(null);
+  const [showSolutionModal, setShowSolutionModal] = useState(false);
+  const [solutionRevealed, setSolutionRevealed] = useState(false);
 
   const { runCode, isReady, isLoading, error: pyodideError } = usePyodide();
-  const { updateProblemProgress, recordHintUsed, getProblemProgress, isProblemSolved } = useProgress();
+  const { updateProblemProgress, recordHintUsed, getProblemProgress, isProblemSolved, saveCode, getSavedCode, isLoaded } = useProgress();
 
-  // Update code when problem changes
+  // Update code when problem changes or context loads
   useEffect(() => {
-    if (problem) {
-      setCode(problem.starterCode);
+    if (problem && isLoaded) {
+      const saved = getSavedCode(problem.id);
+      setCode(saved || problem.starterCode);
       setOutput("");
       setTestSummary("");
       setHintsRevealed(0);
       setShowHints(false);
       setTestResults(null);
     }
-  }, [problem]);
+  }, [problem, isLoaded, getSavedCode]);
+
+  // Save code changes to local storage with debounce
+  useEffect(() => {
+    if (!problem || code === undefined || !isLoaded) return;
+
+    const timeoutId = setTimeout(() => {
+      saveCode(problem.id, code);
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [code, problem?.id, isLoaded, saveCode]);
 
   const handleRunCode = async () => {
     if (!isReady) {
@@ -118,8 +132,8 @@ function EditorContent() {
   const nextProblem = currentProblemIndex < relatedProblems.length - 1 ? relatedProblems[currentProblemIndex + 1] : null;
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)]">
-      <div className="w-full lg:w-1/2 p-4 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black flex flex-col lg:overflow-y-auto">
+    <div className="flex flex-col lg:flex-row h-[calc(100dvh-4rem)] mt-16 lg:mt-16 overflow-hidden">
+      <div className="w-full lg:w-1/2 p-4 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black flex flex-col overflow-y-auto h-[40dvh] lg:h-auto">
         <h1 className="text-2xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">
           Editor Workspace
         </h1>
@@ -149,40 +163,66 @@ function EditorContent() {
             {problem.hints && problem.hints.length > 0 && (
               <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-200 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-amber-800 dark:text-amber-300 flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    Need a hint?
+                    Hints ({hintsRevealed}/{problem.hints.length})
                   </h3>
-                  <span className="text-xs text-amber-600 dark:text-amber-300">
-                    {hintsRevealed}/{problem.hints.length} revealed
-                  </span>
+                  {hintsRevealed < problem.hints.length && (
+                    <button
+                      onClick={handleRevealHint}
+                      className="text-xs font-bold text-amber-700 dark:text-amber-400 hover:underline"
+                    >
+                      Reveal Next Hint
+                    </button>
+                  )}
                 </div>
-
-                {hintsRevealed > 0 && (
-                  <div className="space-y-2 mb-3">
-                    {problem.hints.slice(0, hintsRevealed).map((hint, index) => (
-                      <div
-                        key={index}
-                        className="text-sm text-amber-700 dark:text-amber-200 p-2 bg-amber-100 dark:bg-amber-900/40 rounded"
-                      >
-                        <span className="font-bold">Hint {index + 1}:</span> {hint}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {hintsRevealed < problem.hints.length && (
-                  <button
-                    onClick={handleRevealHint}
-                    className="text-xs font-medium text-amber-700 dark:text-amber-300 hover:text-amber-900 dark:hover:text-amber-100 underline"
-                  >
-                    Show hint {hintsRevealed + 1} of {problem.hints.length}
-                  </button>
-                )}
+                <div className="space-y-2">
+                  {problem.hints.slice(0, hintsRevealed).map((hint, idx) => (
+                    <p key={idx} className="text-sm text-amber-900/80 dark:text-amber-200/80 animate-in fade-in slide-in-from-left-2 duration-300">
+                      • {hint}
+                    </p>
+                  ))}
+                  {hintsRevealed === 0 && (
+                    <p className="text-xs text-amber-600/60 dark:text-amber-400/60 italic">
+                      Need a nudge? Reveal a hint to help you along.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
+
+            {/* Solution Reveal Button */}
+            <div className="mt-6">
+              {!solutionRevealed ? (
+                <button
+                  onClick={() => setShowSolutionModal(true)}
+                  className="w-full py-3 px-4 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-xl font-semibold text-sm transition-all border border-zinc-200 dark:border-zinc-700 flex items-center justify-center gap-2 group"
+                >
+                  <svg className="w-4 h-4 text-zinc-400 group-hover:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  Stuck? Reveal Solution
+                </button>
+              ) : (
+                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+                  <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 font-bold text-sm mb-2">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Solution Unlocked
+                  </div>
+                  <button
+                    onClick={() => setShowSolutionModal(true)}
+                    className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+                  >
+                    View detailed explanation again
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Test Results Summary */}
             {testResults && (
@@ -311,7 +351,7 @@ function EditorContent() {
           )}
         </div>
       </div>
-      <div className="w-full lg:w-1/2 bg-[#1e1e1e] flex flex-col h-[500px] lg:h-auto">
+      <div className="w-full lg:w-1/2 bg-[#1e1e1e] flex flex-col flex-1 lg:h-auto overflow-hidden">
         <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between">
           <p className="text-xs text-zinc-300">Python Editor</p>
           <span className="text-[10px] text-zinc-500">
@@ -322,6 +362,111 @@ function EditorContent() {
           <PythonEditor value={code} onChange={setCode} height="100%" />
         </div>
       </div>
+      {/* Solution Modal Overlay */}
+      {showSolutionModal && problem && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-zinc-950/60 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setShowSolutionModal(false)}
+          />
+          <div className="relative w-full max-w-2xl bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden animate-in zoom-in-95 fade-in duration-300">
+            <div className="p-6 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">
+                  {solutionRevealed ? "Solution & Explanation" : "Reveal Solution?"}
+                </h3>
+                {!solutionRevealed && (
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    Try solving it yourself once more before peeking!
+                  </p>
+                )}
+              </div>
+              <button
+                onClick={() => setShowSolutionModal(false)}
+                className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors text-zinc-500"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {solutionRevealed ? (
+                <div className="space-y-6">
+                  {/* Explanation Section */}
+                  <div>
+                    <h4 className="flex items-center gap-2 text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-3">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                      </svg>
+                      Understanding the Logic
+                    </h4>
+                    <div className="text-zinc-600 dark:text-zinc-300 text-sm leading-relaxed whitespace-pre-wrap font-sans">
+                      {problem.solutionOutline}
+                    </div>
+                  </div>
+
+                  {/* Code Section */}
+                  {(problem.solutionCode || problem.starterCode) && (
+                    <div>
+                      <h4 className="flex items-center gap-2 text-sm font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider mb-3">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                        Reference Implementation
+                      </h4>
+                      <div className="relative group">
+                        <div className="absolute inset-0 bg-emerald-500/5 blur-xl group-hover:bg-emerald-500/10 transition-colors" />
+                        <div className="relative p-4 bg-zinc-950 rounded-xl font-mono text-sm text-zinc-100 overflow-x-auto border border-white/5">
+                          <pre>{problem.solutionCode || problem.starterCode.split('\n').filter(line => !line.trim().startsWith('# TODO:')).join('\n')}</pre>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 mb-2">A small challenge builds big skills</h4>
+                  <p className="text-zinc-500 dark:text-zinc-400 text-sm max-w-md mb-8">
+                    Revealing the solution will show you the idiomatic Python way to solve this, but we recommend checking the <b>hints</b> first!
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+                    <button
+                      onClick={() => { setSolutionRevealed(true); }}
+                      className="flex-1 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-600/20 transition-all"
+                    >
+                      Yes, reveal it
+                    </button>
+                    <button
+                      onClick={() => setShowSolutionModal(false)}
+                      className="flex-1 py-3 px-6 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-xl font-bold transition-all"
+                    >
+                      Wait, not yet
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {solutionRevealed && (
+              <div className="p-4 bg-zinc-50 dark:bg-zinc-800/50 border-t border-zinc-200 dark:border-zinc-800 flex justify-end">
+                <button
+                  onClick={() => setShowSolutionModal(false)}
+                  className="px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg text-sm font-bold hover:opacity-90 transition-opacity"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

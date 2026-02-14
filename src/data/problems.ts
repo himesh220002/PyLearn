@@ -26,6 +26,10 @@ export type Problem = {
    * This is meant to be shown after the learner has attempted the problem.
    */
   solutionOutline?: string;
+  /**
+   * Full Python code solution.
+   */
+  solutionCode?: string;
 };
 
 export const problems: Problem[] = [
@@ -55,6 +59,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Call the built-in print function once with the exact message string: print('Hello, Python learner!'). No extra spaces, punctuation, or additional prints.",
+    solutionCode: "print('Hello, Python learner!')",
   },
   {
     id: "simple_calculator",
@@ -89,6 +94,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Inside add, return the expression a + b. Python will handle positive and negative integers automatically, so you do not need any special cases.",
+    solutionCode: "def add(a, b):\n    return a + b",
   },
   {
     id: "average_marks",
@@ -117,6 +123,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Use the built-in sum() to add all marks and len() to count how many there are, then return sum(marks) / len(marks). Make sure to handle the list as-is without hardcoding any indices.",
+    solutionCode: "def average_mark(marks):\n    return sum(marks) / len(marks)",
   },
   {
     id: "count_pass_students",
@@ -145,6 +152,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Initialize a counter at 0, loop over marks, and increment the counter each time a mark is greater than or equal to 40. Return the final counter value.",
+    solutionCode: "def count_pass(marks):\n    count = 0\n    for mark in marks:\n        if mark >= 40:\n            count += 1\n    return count",
   },
   {
     id: "grade_classifier",
@@ -179,6 +187,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Use an if/elif/else ladder that checks score from highest band to lowest: first score >= 90 for 'A', then >= 75 for 'B', then >= 60 for 'C', and use else for 'D'. Only one branch should run.",
+    solutionCode: "def grade(score):\n    if score >= 90:\n        return 'A'\n    elif score >= 75:\n        return 'B'\n    elif score >= 60:\n        return 'C'\n    else:\n        return 'D'",
   },
   {
     id: "count_vowels",
@@ -213,6 +222,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Convert the text to lower case, iterate over each character, and increase a counter whenever the character is one of 'aeiou'. Return the counter at the end.",
+    solutionCode: "def count_vowels(text):\n    vowels = 'aeiou'\n    text = text.lower()\n    count = 0\n    for char in text:\n        if char in vowels:\n            count += 1\n    return count",
   },
   {
     id: "reverse_string",
@@ -238,6 +248,7 @@ export const problems: Problem[] = [
       "Use text[::-1] to reverse the entire string."
     ],
     solutionOutline: "In Python, the easiest way to reverse a string is using slicing: text[::-1]. This creates a copy of the string starting from the end and moving backwards to the beginning.",
+    solutionCode: "def reverse_string(text):\n    return text[::-1]",
   },
   {
     id: "format_sentence",
@@ -263,6 +274,7 @@ export const problems: Problem[] = [
       "Put variables inside curly braces: f'User {name} scored {score} points.'"
     ],
     solutionOutline: "Use an f-string: f'User {name} scored {score} points.' This is the modern and preferred way to format strings in Python.",
+    solutionCode: "def format_msg(name, score):\n    return f'User {name} scored {score} points.'",
   },
   {
     id: "extract_domain",
@@ -288,6 +300,7 @@ export const problems: Problem[] = [
       "Use [-1] to get the last element (the domain part)."
     ],
     solutionOutline: "You can use email.split('@')[-1] to get the last part after the '@' symbol, or find the index of '@' using find() and slice the string from that index + 1 to the end.",
+    solutionCode: "def get_domain(email):\n    return email.split('@')[-1]",
   },
   {
     id: "access_elements",
@@ -313,6 +326,7 @@ export const problems: Problem[] = [
       "Return a new list: [items[0], items[-1]]"
     ],
     solutionOutline: "Use items[0] for the first element and items[-1] for the last element. Return them inside a new list: [items[0], items[-1]].",
+    solutionCode: "def get_ends(items):\n    return [items[0], items[-1]]",
   },
   {
     id: "append_insert",
@@ -338,6 +352,7 @@ export const problems: Problem[] = [
       "Order matters! Append first, then insert at index 1."
     ],
     solutionOutline: "Use items.append('apple') to add to the end, then items.insert(1, 'milk') to put milk at the second position. Return the list.",
+    solutionCode: "def manage_list(items):\n    items.append('apple')\n    items.insert(1, 'milk')\n    return items",
   },
   {
     id: "remove_pop",
@@ -363,6 +378,7 @@ export const problems: Problem[] = [
       "Call remove first, then pop, and return the modified list."
     ],
     solutionOutline: "Use items.remove('banana') to delete the specific value, then items.pop() to remove the last item. Return items.",
+    solutionCode: "def shrink_list(items):\n    items.remove('banana')\n    items.pop()\n    return items",
   },
   {
     id: "list_slicing_middle",
@@ -388,6 +404,7 @@ export const problems: Problem[] = [
       "Return items[1:3] to get indices 1 and 2."
     ],
     solutionOutline: "Use slicing items[1:3]. This starts at index 1 and goes up to (but doesn't include) index 3.",
+    solutionCode: "def get_middle(items):\n    return items[1:3]",
   },
   {
     id: "reverse_list_manual",
@@ -413,6 +430,7 @@ export const problems: Problem[] = [
       "Use range(len(items)-1, -1, -1) to go backwards."
     ],
     solutionOutline: "Initialize an empty list. Loop through the original list from the end to the beginning (using range(len(items)-1, -1, -1)) and append each item to the new list.",
+    solutionCode: "def manual_reverse(items):\n    res = []\n    for i in range(len(items)-1, -1, -1):\n        res.append(items[i])\n    return res",
   },
   {
     id: "find_min_max",
@@ -438,6 +456,7 @@ export const problems: Problem[] = [
       "Return (min(items), max(items))"
     ],
     solutionOutline: "You can use the built-in min(items) and max(items) functions, or iterate through the list keeping track of the current min and max found so far.",
+    solutionCode: "def get_extremes(items):\n    return (min(items), max(items))",
   },
   {
     id: "flatten_2d_list",
@@ -463,6 +482,7 @@ export const problems: Problem[] = [
       "Use: [item for row in grid for item in row]"
     ],
     solutionOutline: "Use a nested for loop: for row in grid: for item in row: result.append(item). Alternatively, use a nested list comprehension: [item for row in grid for item in row].",
+    solutionCode: "def flatten(grid):\n    return [item for row in grid for item in row]",
   },
   {
     id: "todo_list_manager",
@@ -488,6 +508,7 @@ export const problems: Problem[] = [
       "Format: 'Remaining: ' + ', '.join(tasks)"
     ],
     solutionOutline: "Use tasks.pop(done_index) to remove the completed task. Then use ', '.join(tasks) to format the remaining items into a string.",
+    solutionCode: "def manage_todo(tasks, done_index):\n    tasks.pop(done_index)\n    return f'Remaining: {\", \".join(tasks)}'",
   },
   {
     id: "sum_of_three",
@@ -522,6 +543,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Simply return a + b + c. Python will add the three numbers in order; no loops or conditionals are needed.",
+    solutionCode: "def sum_of_three(a, b, c):\n    return a + b + c",
   },
   {
     id: "word_frequency",
@@ -552,6 +574,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Create an empty dictionary, then loop over the words list. For each word, either set its count to 1 if it is new, or increment the existing count. Finally, return the dictionary.",
+    solutionCode: "def word_frequency(words):\n    freq = {}\n    for word in words:\n        freq[word] = freq.get(word, 0) + 1\n    return freq",
   },
   {
     id: "greet_user",
@@ -579,6 +602,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Call input() once to read the user's name into a variable, then use print with an f-string or string concatenation to output 'Hello, <name>!'. Do not add extra spaces or punctuation.",
+    solutionCode: "name = input()\nprint(f'Hello, {name}!')",
   },
   {
     id: "sum_two_strings",
@@ -607,6 +631,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Convert both input strings a and b to integers using int(a) and int(b), then return their sum. Do not try to add the strings directly, because that would concatenate them instead of adding numerically.",
+    solutionCode: "def sum_two_strings(a, b):\n    return int(a) + int(b)",
   },
   {
     id: "filter_even_numbers",
@@ -635,6 +660,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Build a new list containing only numbers where number % 2 == 0. You can do this with a for loop and append, or a list comprehension like [n for n in numbers if n % 2 == 0].",
+    solutionCode: "def filter_even(numbers):\n    return [n for n in numbers if n % 2 == 0]",
   },
   {
     id: "unique_items",
@@ -665,6 +691,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Use the set() constructor on the list of items, e.g. return set(items). Python will automatically remove duplicates and keep only unique values.",
+    solutionCode: "def unique_items(items):\n    return set(items)",
   },
   {
     id: "squares_list",
@@ -693,6 +720,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Use range(n) to generate numbers from 0 to n-1 and a list comprehension [k * k for k in range(n)] to build and return the list of squares.",
+    solutionCode: "def squares(n):\n    return [k * k for k in range(n)]",
   },
   {
     id: "safe_divide",
@@ -727,6 +755,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Wrap the division a / b inside a try block and catch ZeroDivisionError in an except block. In the except block, return the message string instead of raising the error.",
+    solutionCode: "def safe_divide(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return 'Cannot divide by zero'",
   },
   {
     id: "count_lines_in_file",
@@ -755,6 +784,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Open the file using with open(path) as f:, then either loop over the file and increment a counter for each line, or use sum(1 for _ in f). Return the final count.",
+    solutionCode: "def count_lines(path):\n    with open(path) as f:\n        return sum(1 for line in f)",
   },
   {
     id: "person_class",
@@ -782,6 +812,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "Define __init__ to store self.name and self.age. Define introduce to return the f-string 'Hi, my name is {self.name}'.",
+    solutionCode: "class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\n    def introduce(self):\n        return f'Hi, my name is {self.name}'",
   },
   {
     id: "student_class",
@@ -816,6 +847,7 @@ export const problems: Problem[] = [
     ],
     solutionOutline:
       "In __init__, assign the name and marks parameters to self.name and self.marks. In is_pass, return True if self.marks is greater than or equal to 40, otherwise return False.",
+    solutionCode: "class Student:\n    def __init__(self, name, marks):\n        self.name = name\n        self.marks = marks\n\n    def is_pass(self):\n        return self.marks >= 40",
   },
   {
     id: "write_file_practice",
@@ -841,7 +873,8 @@ export const problems: Problem[] = [
       "Use 'with open(filename, 'w') as f:'",
       "Use f.write(message)",
     ],
-    solutionOutline: "Open the file in write mode ('w') using a with statement, then call f.write(message)."
+    solutionOutline: "Open the file in write mode ('w') using a with statement, then call f.write(message).",
+    solutionCode: "def write_message(filename, message):\n    with open(filename, 'w') as f:\n        f.write(message)",
   },
   {
     id: "password_strength",
@@ -878,7 +911,8 @@ export const problems: Problem[] = [
       "Use `any(char.isdigit() for char in password)` to check for numbers.",
       "Combine both conditions with `and`."
     ],
-    solutionOutline: "Check if len(password) >= min_length and if any character is a digit. Return the boolean result."
+    solutionOutline: "Check if len(password) >= min_length and if any character is a digit. Return the boolean result.",
+    solutionCode: "def analyze_password(password, min_length=8):\n    has_digit = any(char.isdigit() for char in password)\n    return len(password) >= min_length and has_digit",
   },
   {
     id: "inventory_manager",
@@ -909,7 +943,8 @@ export const problems: Problem[] = [
       "Use `inv.update(new_items)` to add the new list.",
       "Return the `inv` object."
     ],
-    solutionOutline: "Initialize Counter with current_inv. Call update() method with new_items. Return the Counter."
+    solutionOutline: "Initialize Counter with current_inv. Call update() method with new_items. Return the Counter.",
+    solutionCode: "from collections import Counter\n\ndef update_inventory(current_inv, new_items):\n    inv = Counter(current_inv)\n    inv.update(new_items)\n    return inv",
   },
   {
     id: "log_processor",
@@ -934,7 +969,8 @@ export const problems: Problem[] = [
       "Check `if log.startswith('ERROR:'):`",
       "Use `yield log` inside the if block."
     ],
-    solutionOutline: "Loop through each log line. If line.startswith('ERROR:'), yield it."
+    solutionOutline: "Loop through each log line. If line.startswith('ERROR:'), yield it.",
+    solutionCode: "def process_logs(logs):\n    for log in logs:\n        if log.startswith('ERROR:'):\n            yield log",
   },
   {
     id: "data_cleaning_pipeline",
@@ -965,7 +1001,8 @@ export const problems: Problem[] = [
       "Step 2: `capped = map(lambda s: min(s, 100), valid)`",
       "Step 3: `return sum(capped)`"
     ],
-    solutionOutline: "Filter for scores >= 0. Map to min(score, 100). Return the sum."
+    solutionOutline: "Filter for scores >= 0. Map to min(score, 100). Return the sum.",
+    solutionCode: "def clean_data(scores):\n    valid = filter(lambda s: s >= 0, scores)\n    capped = map(lambda s: min(s, 100), valid)\n    return sum(capped)",
   },
   {
     id: "module_importer",
@@ -996,7 +1033,8 @@ export const problems: Problem[] = [
       "Check `if n < 0: return -1`.",
       "Return `math.sqrt(n)`."
     ],
-    solutionOutline: "Inside function, import math. If n < 0, return -1. Else return math.sqrt(n)."
+    solutionOutline: "Inside function, import math. If n < 0, return -1. Else return math.sqrt(n).",
+    solutionCode: "def safe_sqrt(n):\n    import math\n    if n < 0:\n        return -1\n    return math.sqrt(n)",
   },
   {
     id: "bank_account_upgrade",
@@ -1033,7 +1071,8 @@ export const problems: Problem[] = [
       "Use `@balance.setter` before `def balance(self, value):`.",
       "Inside setter: `if value < 0: raise ValueError(...)`."
     ],
-    solutionOutline: "Define getter with @property. Define setter with @balance.setter and check if value < 0."
+    solutionOutline: "Define getter with @property. Define setter with @balance.setter and check if value < 0.",
+    solutionCode: "class BankAccount:\n    def __init__(self, balance=0):\n        self._balance = balance\n\n    @property\n    def balance(self):\n        return self._balance\n\n    @balance.setter\n    def balance(self, value):\n        if value < 0:\n            raise ValueError('Balance cannot be negative')\n        self._balance = value",
   },
   {
     id: "json_parser",
@@ -1064,7 +1103,8 @@ export const problems: Problem[] = [
       "Use `except json.JSONDecodeError: return []`",
       "Extract emails: `[u['email'] for u in users]`"
     ],
-    solutionOutline: "Wrap json.loads in try/except block. On success, use list comprehension to get emails. On error, return empty list."
+    solutionOutline: "Wrap json.loads in try/except block. On success, use list comprehension to get emails. On error, return empty list.",
+    solutionCode: "import json\n\ndef extract_emails(json_str):\n    try:\n        users = json.loads(json_str)\n        return [u['email'] for u in users]\n    except (json.JSONDecodeError, KeyError, TypeError):\n        return []",
   },
   {
     id: "unit_tester",
@@ -1095,7 +1135,8 @@ export const problems: Problem[] = [
       "Compare usage `==`.",
       "Use f-string for the FAIL message."
     ],
-    solutionOutline: "Call func(input_val). If result == expected, return 'PASS'. Else return f'FAIL: Expected {expected}, got {result}'."
+    solutionOutline: "Call func(input_val). If result == expected, return 'PASS'. Else return f'FAIL: Expected {expected}, got {result}'.",
+    solutionCode: "def run_test(func, input_val, expected):\n    actual = func(input_val)\n    if actual == expected:\n        return 'PASS'\n    return f'FAIL: Expected {expected}, got {actual}'",
   },
   {
     id: "refactor_challenge",
@@ -1126,7 +1167,8 @@ export const problems: Problem[] = [
       "Add `if x % 2 == 0` at the end.",
       "Return the list comprehension directly."
     ],
-    solutionOutline: "Return [n*n for n in numbers if n % 2 == 0]."
+    solutionOutline: "Return [n*n for n in numbers if n % 2 == 0].",
+    solutionCode: "def get_even_squares(numbers):\n    return [n * n for n in numbers if n % 2 == 0]",
   },
   {
     id: "algo_design",
@@ -1157,7 +1199,8 @@ export const problems: Problem[] = [
       "Handle edge cases (index 0 and len-1) carefully.",
       "A linear scan O(N) is fine."
     ],
-    solutionOutline: "Iterate from 0 to len-1. Check neighbors. If conditions met, return index."
+    solutionOutline: "Iterate from 0 to len-1. Check neighbors. If conditions met, return index.",
+    solutionCode: "def find_peak(nums):\n    n = len(nums)\n    for i in range(n):\n        left = nums[i-1] if i > 0 else float('-inf')\n        right = nums[i+1] if i < n - 1 else float('-inf')\n        if nums[i] > left and nums[i] > right:\n            return i\n    return 0",
   },
   {
     id: "ai_intro",
@@ -1188,7 +1231,8 @@ export const problems: Problem[] = [
       "Add bias to the sum.",
       "Apply ReLU: `max(0, result)`"
     ],
-    solutionOutline: "Calculate weighted sum. Add bias. Return max(0, total)."
+    solutionOutline: "Calculate weighted sum. Add bias. Return max(0, total).",
+    solutionCode: "def neuron(inputs, weights, bias):\n    total = sum(i * w for i, w in zip(inputs, weights)) + bias\n    return total if total > 0 else 0",
   },
 ];
 

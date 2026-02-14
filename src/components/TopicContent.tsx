@@ -21,7 +21,7 @@ interface TopicContentProps {
 }
 
 export default function TopicContent({ topic, prevTopic, nextTopic }: TopicContentProps) {
-    const { isComplete, markComplete, markIncomplete } = useProgress();
+    const { isTopicComplete, markTopicComplete, markTopicIncomplete } = useProgress();
 
     const renderVisualizer = (topic: Topic) => {
         return topic.visualType === 'array' ? (
@@ -259,8 +259,8 @@ export default function TopicContent({ topic, prevTopic, nextTopic }: TopicConte
                     {/* Completion Checkbox */}
                     <div className="mt-12 flex justify-center">
                         <label className="group flex items-center gap-4 cursor-pointer p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 transition-all duration-300">
-                            <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all duration-300 ${isComplete(topic.id) ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-400 group-hover:border-emerald-500'}`}>
-                                {isComplete(topic.id) && (
+                            <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all duration-300 ${isTopicComplete(topic.id) ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-400 group-hover:border-emerald-500'}`}>
+                                {isTopicComplete(topic.id) && (
                                     <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                                     </svg>
@@ -269,11 +269,11 @@ export default function TopicContent({ topic, prevTopic, nextTopic }: TopicConte
                             <input
                                 type="checkbox"
                                 className="hidden"
-                                checked={isComplete(topic.id)}
-                                onChange={(e) => e.target.checked ? markComplete(topic.id) : markIncomplete(topic.id)}
+                                checked={isTopicComplete(topic.id)}
+                                onChange={(e) => e.target.checked ? markTopicComplete(topic.id) : markTopicIncomplete(topic.id)}
                             />
-                            <span className={`text-lg font-semibold transition-colors ${isComplete(topic.id) ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-200'}`}>
-                                {isComplete(topic.id) ? 'Topic Completed!' : 'Mark as Completed'}
+                            <span className={`text-lg font-semibold transition-colors ${isTopicComplete(topic.id) ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-600 dark:text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-200'}`}>
+                                {isTopicComplete(topic.id) ? 'Topic Completed!' : 'Mark as Completed'}
                             </span>
                         </label>
                     </div>

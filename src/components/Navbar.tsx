@@ -39,7 +39,7 @@ export default function Navbar() {
 
 
   // Use global progress context
-  const { completedTopics, totalTopics } = useProgress();
+  const { progress, totalTopics, getProgressPercent } = useProgress();
 
   // Load theme from localStorage
   useEffect(() => {
@@ -69,37 +69,43 @@ export default function Navbar() {
   const nextTopic = currentIndex !== -1 && currentIndex < topics.length - 1 ? topics[currentIndex + 1] : null;
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-black/80 backdrop-blur-lg">
+    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo and main nav */}
-          <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
-              <div className="transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                <NavPythonLogo />
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-emerald-600 dark:from-indigo-400 dark:to-emerald-400 bg-clip-text text-transparent">
+        <div className="flex justify-between h-16">
+          {/* Logo and Main Nav */}
+          <div className="flex items-center gap-8">
+            <Link href="/" className="flex items-center gap-2 group">
+              <NavPythonLogo />
+              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-indigo-400 dark:from-indigo-400 dark:to-indigo-300">
                 PyLearn
               </span>
             </Link>
 
-            {/* Desktop nav */}
-            <div className="hidden sm:ml-8 sm:flex sm:space-x-1">
+            <div className="hidden md:flex items-center gap-1">
               <Link
                 href="/topics"
-                className="text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${pathname === "/topics"
+                  ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400"
+                  : "text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400"
+                  }`}
               >
                 Topics
               </Link>
               <Link
                 href="/problems"
-                className="text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${pathname === "/problems"
+                  ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400"
+                  : "text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400"
+                  }`}
               >
                 Problems
               </Link>
               <Link
-                href="/editor?problem=hello_world"
-                className="text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+                href="/editor"
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${pathname === "/editor"
+                  ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400"
+                  : "text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400"
+                  }`}
               >
                 Editor
               </Link>
@@ -113,7 +119,7 @@ export default function Navbar() {
               <div className="flex flex-col items-end">
                 <div className="flex items-baseline gap-1">
                   <span className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
-                    {completedTopics.size}
+                    {progress.completedTopics.length}
                   </span>
                   <span className="text-xs text-zinc-400 uppercase tracking-wider font-semibold">
                     / {totalTopics} Chapters
@@ -123,7 +129,7 @@ export default function Navbar() {
                 <div className="w-32 h-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden mt-1">
                   <div
                     className="h-full bg-gradient-to-r from-emerald-500 to-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)] transition-all duration-700 ease-out"
-                    style={{ width: `${(completedTopics.size / totalTopics) * 100}%` }}
+                    style={{ width: `${getProgressPercent()}%` }}
                   />
                 </div>
               </div>
