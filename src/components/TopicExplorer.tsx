@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Topic } from "../data/topics";
+import { useProgress } from "../lib/useProgress";
 
 interface TopicExplorerProps {
     initialTopics: Topic[];
@@ -60,6 +61,7 @@ const FeatureIcon = ({ type }: { type: string }) => {
 export default function TopicExplorer({ initialTopics }: TopicExplorerProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [filterLevel, setFilterLevel] = useState<"all" | "beginner" | "intermediate">("all");
+    const { isTopicComplete } = useProgress();
 
     const filteredTopics = initialTopics.filter((topic) => {
         const matchesSearch =
@@ -94,8 +96,8 @@ export default function TopicExplorer({ initialTopics }: TopicExplorerProps) {
                             key={level}
                             onClick={() => setFilterLevel(level)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all duration-200 whitespace-nowrap ${filterLevel === level
-                                    ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
-                                    : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800"
+                                ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
+                                : "bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800"
                                 }`}
                         >
                             {level === "all" ? "All Levels" : level}
@@ -107,43 +109,58 @@ export default function TopicExplorer({ initialTopics }: TopicExplorerProps) {
             {/* Topics Grid */}
             <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {filteredTopics.length > 0 ? (
-                    filteredTopics.map((topic, index) => (
-                        <Link
-                            href={`/topics/${topic.slug}`}
-                            key={topic.id}
-                            className="group relative flex flex-col h-full bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] hover:border-indigo-500/30 dark:hover:border-indigo-500/30 overflow-hidden"
-                        >
-                            {/* Hover Glow Effect */}
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent pointer-events-none" />
+                    filteredTopics.map((topic, index) => {
+                        const completed = isTopicComplete(topic.id);
+                        return (
+                            <Link
+                                href={`/topics/${topic.slug}`}
+                                key={topic.id}
+                                className={`group relative flex flex-col h-full bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm transition-all duration-300 hover:shadow-xl hover:translate-y-[-4px] overflow-hidden ${completed
+                                    ? "border-emerald-500/30 dark:border-emerald-500/30 bg-emerald-50/5 dark:bg-emerald-500/5"
+                                    : "border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/30 dark:hover:border-indigo-500/30"
+                                    }`}
+                            >
+                                {/* Hover Glow Effect */}
+                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent pointer-events-none" />
 
-                            <div className="p-8 flex flex-col h-full relative z-10">
-                                <div className="flex justify-between items-start mb-6">
-                                    <FeatureIcon type={topic.visualType || topic.id} />
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${topic.level === "beginner"
+                                <div className="p-8 flex flex-col h-full relative z-10">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div className="relative">
+                                            <FeatureIcon type={topic.visualType || topic.id} />
+                                            {completed && (
+                                                <div className="absolute -top-1 -right-1 bg-emerald-500 text-white rounded-full p-0.5 shadow-lg border-2 border-white dark:border-zinc-900 animate-in zoom-in duration-300">
+                                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${topic.level === "beginner"
                                             ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800"
                                             : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-300 dark:border-amber-800"
-                                        }`}>
-                                        {topic.level === "beginner" ? "Beginner" : "Intermediate"}
-                                    </span>
+                                            }`}>
+                                            {topic.level === "beginner" ? "Beginner" : "Intermediate"}
+                                        </span>
+                                    </div>
+
+                                    <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                        {topic.title}
+                                    </h3>
+
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 flex-grow line-clamp-3">
+                                        {topic.summary}
+                                    </p>
+
+                                    <div className="flex items-center text-sm font-semibold text-indigo-600 dark:text-indigo-400 mt-auto group-hover:translate-x-1 transition-transform duration-200">
+                                        Start Learning
+                                        <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                        </svg>
+                                    </div>
                                 </div>
-
-                                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 mb-3 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                    {topic.title}
-                                </h3>
-
-                                <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6 flex-grow line-clamp-3">
-                                    {topic.summary}
-                                </p>
-
-                                <div className="flex items-center text-sm font-semibold text-indigo-600 dark:text-indigo-400 mt-auto group-hover:translate-x-1 transition-transform duration-200">
-                                    Start Learning
-                                    <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </Link>
-                    ))
+                            </Link>
+                        );
+                    })
                 ) : (
                     <div className="col-span-full py-20 text-center">
                         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4">

@@ -132,8 +132,8 @@ function EditorContent() {
   const nextProblem = currentProblemIndex < relatedProblems.length - 1 ? relatedProblems[currentProblemIndex + 1] : null;
 
   return (
-    <div className="flex flex-col lg:flex-row h-[calc(100dvh-4rem)] mt-16 lg:mt-16 overflow-hidden">
-      <div className="w-full lg:w-1/2 p-4 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black flex flex-col overflow-y-auto h-[40dvh] lg:h-auto">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-4rem)] lg:h-[calc(100vh-4rem)] mt-16 lg:mt-16 lg:overflow-hidden">
+      <div className="w-full lg:w-1/2 p-4 border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black flex flex-col lg:overflow-y-auto">
         <h1 className="text-2xl font-bold mb-2 text-zinc-900 dark:text-zinc-100">
           Editor Workspace
         </h1>
@@ -351,7 +351,7 @@ function EditorContent() {
           )}
         </div>
       </div>
-      <div className="w-full lg:w-1/2 bg-[#1e1e1e] flex flex-col flex-1 lg:h-auto overflow-hidden">
+      <div className="w-full lg:w-1/2 bg-[#1e1e1e] flex flex-col h-[600px] lg:h-auto lg:overflow-hidden">
         <div className="px-4 py-2 border-b border-zinc-800 flex items-center justify-between">
           <p className="text-xs text-zinc-300">Python Editor</p>
           <span className="text-[10px] text-zinc-500">
