@@ -5,13 +5,13 @@ import Link from "next/link";
 import { getAllProblems, Problem } from "../../data/problems";
 import { useProgress } from "../../lib/useProgress";
 
-type FilterDifficulty = "all" | "beginner" | "intermediate";
+type FilterDifficulty = "all" | "beginner" | "intermediate" | "advanced";
 type FilterStatus = "all" | "solved" | "unsolved";
 
 export default function ProblemsPage() {
   const problems = getAllProblems();
   const { isProblemSolved, getProblemProgress, getOverallStats, isLoaded } = useProgress();
-  
+
   const [difficultyFilter, setDifficultyFilter] = useState<FilterDifficulty>("all");
   const [statusFilter, setStatusFilter] = useState<FilterStatus>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -79,14 +79,14 @@ export default function ProblemsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-12 px-4 sm:px-6 lg:px-12">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-24 px-4 sm:px-6 lg:px-12">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
+        <div className="mb-6 lg:mb-10">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
             Practice Problems
           </h1>
-          <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
+          <p className="lg:mt-2 mt-1 text-sm sm:text-base lg:text-lg text-zinc-600 dark:text-zinc-400">
             Sharpen your Python skills with {problems.length} coding challenges
           </p>
         </div>
@@ -142,6 +142,7 @@ export default function ProblemsPage() {
               <option value="all">All Levels</option>
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
             </select>
 
             {/* Topic Filter */}
@@ -191,16 +192,15 @@ export default function ProblemsPage() {
                   {topicProblems.map((problem) => {
                     const solved = isProblemSolved(problem.id);
                     const progress = getProblemProgress(problem.id);
-                    
+
                     return (
                       <Link
                         key={problem.id}
                         href={`/editor?problem=${problem.id}`}
-                        className={`group relative bg-white dark:bg-zinc-900 rounded-xl p-5 border-2 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${
-                          solved
-                            ? "border-emerald-300 dark:border-emerald-700"
-                            : "border-zinc-200 dark:border-zinc-800 hover:border-indigo-300 dark:hover:border-indigo-700"
-                        }`}
+                        className={`group relative bg-white dark:bg-zinc-900 rounded-xl p-5 border-2 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${solved
+                          ? "border-emerald-300 dark:border-emerald-700"
+                          : "border-zinc-200 dark:border-zinc-800 hover:border-indigo-300 dark:hover:border-indigo-700"
+                          }`}
                       >
                         {/* Solved Badge */}
                         {solved && (
@@ -218,11 +218,12 @@ export default function ProblemsPage() {
 
                         {/* Difficulty Badge */}
                         <span
-                          className={`inline-block mt-2 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide ${
-                            problem.difficulty === "beginner"
-                              ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
-                              : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
-                          }`}
+                          className={`inline-block mt-2 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide ${problem.difficulty === "beginner"
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                            : problem.difficulty === "intermediate"
+                              ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+                              : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300"
+                            }`}
                         >
                           {problem.difficulty}
                         </span>
@@ -241,11 +242,10 @@ export default function ProblemsPage() {
                             </div>
                             <div className="h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
                               <div
-                                className={`h-full transition-all duration-300 ${
-                                  progress.testsPassed === progress.totalTests
-                                    ? "bg-emerald-500"
-                                    : "bg-indigo-500"
-                                }`}
+                                className={`h-full transition-all duration-300 ${progress.testsPassed === progress.totalTests
+                                  ? "bg-emerald-500"
+                                  : "bg-indigo-500"
+                                  }`}
                                 style={{
                                   width: `${(progress.testsPassed / progress.totalTests) * 100}%`,
                                 }}

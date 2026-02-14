@@ -1,23 +1,31 @@
-export type TopicLevel = "beginner" | "intermediate";
+export type TopicLevel = "beginner" | "intermediate" | "advanced";
+
+export type VisualType = "array" | "loop" | "string" | "nested" | "slicing" | "operation" | "dictionary" | "nested_dict" | "flowchart" | "search" | "graph" | "none";
+
+export type VisualData = {
+  type?: VisualType;
+  data: any;
+  highlightIndices?: number[];
+  label?: string;
+  // For operation visualizer
+  operation?: string;
+  before?: any[];
+  after?: any[];
+  highlightIndex?: number;
+  // For search visualizer
+  target?: number;
+  // For graph visualizer
+  algorithm?: "bfs" | "dfs" | "dijkstra" | "bellman-ford";
+  startNode?: string;
+  endNode?: string;
+};
 
 export type TopicSection = {
   heading: string;
   body: string;
   codeExample?: string;
-  visualData?: {
-    type?: VisualType;
-    data: any;
-    highlightIndices?: number[];
-    label?: string;
-    // For operation visualizer
-    operation?: string;
-    before?: any[];
-    after?: any[];
-    highlightIndex?: number;
-  };
+  visualData?: VisualData;
 };
-
-export type VisualType = "array" | "loop" | "string" | "nested" | "slicing" | "operation" | "dictionary" | "nested_dict" | "flowchart" | "none";
 
 export type Topic = {
   id: string;
@@ -26,16 +34,7 @@ export type Topic = {
   level: TopicLevel;
   summary: string;
   visualType?: VisualType;
-  visualData?: {
-    type?: VisualType;
-    data: any;
-    highlightIndices?: number[];
-    label?: string;
-    operation?: string;
-    before?: any[];
-    after?: any[];
-    highlightIndex?: number;
-  };
+  visualData?: VisualData;
   practiceId: string;
   layout?: "default" | "wide";
   sections: TopicSection[];
@@ -2154,6 +2153,225 @@ export const topics: Topic[] = [
         heading: "Data Science & Automation",
         body: "**Pandas** is Excel on steroids. **Selenium** automates browsers. Python is the glue that connects systems, automates boring tasks, and analyzes massive datasets.",
         codeExample: "import pandas as pd\n\n# Read a CSV with 1 million rows in milliseconds\ndf = pd.read_csv('big_data.csv')\nprint(df.describe())  # Instant statistics"
+      }
+    ]
+  },
+  {
+    id: "essential-algorithms",
+    slug: "essential-algorithms",
+    title: "Essential Algorithms Masterclass",
+    level: "advanced",
+    summary:
+      "The definitive guide to the algorithms that power the modern world. From fundamental searching and sorting to complex graph theory, dynamic programming, and machine learning architectures.",
+    visualType: "flowchart",
+    visualData: {
+      type: "flowchart",
+      label: "Algorithm Taxonomy",
+      data: {
+        nodes: [
+          { id: "core", type: "start", label: "Core: Search/Sort" },
+          { id: "graph", type: "action", label: "Graph Theory" },
+          { id: "dp", type: "action", label: "Dynamic Programming" },
+          { id: "crypto", type: "action", label: "Cryptography" },
+          { id: "ml", type: "end", label: "Modern ML/Data" }
+        ],
+        edges: [
+          { from: "core", to: "graph", label: "Foundations" },
+          { from: "graph", to: "dp", label: "Optimization" },
+          { from: "dp", to: "crypto", label: "Logic" },
+          { from: "crypto", to: "ml", label: "Advanced" }
+        ]
+      }
+    },
+    practiceId: "binary_search_impl",
+    layout: "wide",
+    sections: [
+      {
+        heading: "1. Core Algorithms: Searching & Sorting",
+        body: "Searching and sorting are the bedrock of computer science. Searching algorithms efficiently locate data, while sorting algorithms organize it to optimize further operations.",
+        codeExample: "### Searching Algorithms\n\n# 1. Linear Search - O(n)\ndef linear_search(arr, target):\n    for i in range(len(arr)):\n        if arr[i] == target:\n            return i\n    return -1\n\n# 2. Binary Search - O(log n) | Requires sorted data\ndef binary_search(arr, target):\n    low, high = 0, len(arr) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\n# 3. Hashing (Hash Table Lookup) - O(1) average\ndef hash_lookup(data_dict, key):\n    return data_dict.get(key, 'Not Found')\n\n### Sorting Algorithms\n\n# 4. Quick Sort - O(n log n) average\ndef quick_sort(arr):\n    if len(arr) <= 1: return arr\n    pivot = arr[len(arr) // 2]\n    left = [x for x in arr if x < pivot]\n    middle = [x for x in arr if x == pivot]\n    right = [x for x in arr if x > pivot]\n    return quick_sort(left) + middle + quick_sort(right)\n\n# 5. Merge Sort - O(n log n) stable\ndef merge_sort(arr):\n    if len(arr) <= 1: return arr\n    mid = len(arr) // 2\n    left = merge_sort(arr[:mid])\n    right = merge_sort(arr[mid:])\n    return merge(left, right)\n\ndef merge(left, right):\n    result = []\n    while left and right:\n        if left[0] < right[0]: result.append(left.pop(0))\n        else: result.append(right.pop(0))\n    return result + left + right\n\n# 6. Heap Sort - O(n log n) in-place\nimport heapq\ndef heap_sort(arr):\n    heapq.heapify(arr)\n    return [heapq.heappop(arr) for _ in range(len(arr))]\n\n# 7. Counting Sort - O(n + k) non-comparison\ndef counting_sort(arr):\n    if not arr: return arr\n    max_val = max(arr)\n    counts = [0] * (max_val + 1)\n    for x in arr: counts[x] += 1\n    result = []\n    for i, count in enumerate(counts):\n        result.extend([i] * count)\n    return result",
+        visualData: {
+          type: "search",
+          label: "Binary Search Animation",
+          data: [2, 5, 8, 12, 16, 23, 38, 56, 72, 91],
+          target: 23
+        }
+      },
+      {
+        heading: "2. Graph Traversals (BFS & DFS)",
+        body: "Breadth-First Search (BFS) explores neighbors level-by-level, ideal for shortest paths in unweighted graphs. Depth-First Search (DFS) dives deep before backtracking, useful for cycle detection.",
+        codeExample: "from collections import deque\n\n# BFS\ndef bfs(graph, start):\n    visited = {start}\n    queue = deque([start])\n    while queue:\n        node = queue.popleft()\n        for neighbor in graph[node]:\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n\n# DFS\ndef dfs(graph, node, visited=None):\n    if visited is None: visited = set()\n    visited.add(node)\n    for neighbor in graph[node]:\n        if neighbor not in visited:\n            dfs(graph, neighbor, visited)",
+        visualData: {
+          type: "graph",
+          label: "Breadth-First Search Animation",
+          algorithm: "bfs",
+          startNode: "A",
+          data: {
+            nodes: [{ id: "A" }, { id: "B" }, { id: "C" }, { id: "D" }, { id: "E" }, { id: "F" }],
+            edges: [
+              { source: "A", target: "B", weight: 1 },
+              { source: "A", target: "C", weight: 1 },
+              { source: "B", target: "D", weight: 1 },
+              { source: "B", target: "E", weight: 1 },
+              { source: "C", target: "F", weight: 1 }
+            ]
+          }
+        }
+      },
+      {
+        heading: "3. Pathfinding: Dijkstra & Bellman-Ford",
+        body: "Dijkstra's algorithm finds the shortest path in weighted graphs (with non-negative weights). Bellman-Ford handles negative weights and detects negative cycles.",
+        codeExample: "import heapq\n\n# Dijkstra\ndef dijkstra(graph, start):\n    distances = {n: float('inf') for n in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    while pq:\n        d, u = heapq.heappop(pq)\n        if d > distances[u]: continue\n        for v, weight in graph[u].items():\n            if d + weight < distances[v]:\n                distances[v] = d + weight\n                heapq.heappush(pq, (distances[v], v))\n\n# Bellman-Ford\ndef bellman_ford(graph, start, nodes):\n    dist = {n: float('inf') for n in nodes}\n    dist[start] = 0\n    for _ in range(len(nodes) - 1):\n        for u, neighbors in graph.items():\n            for v, w in neighbors.items():\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w",
+        visualData: {
+          type: "graph",
+          label: "Bellman-Ford Animation",
+          algorithm: "bellman-ford",
+          startNode: "A",
+          data: {
+            nodes: [{ id: "A" }, { id: "B" }, { id: "C" }, { id: "D" }],
+            edges: [
+              { source: "A", target: "B", weight: 6 },
+              { source: "A", target: "C", weight: 5 },
+              { source: "B", target: "D", weight: -1 },
+              { source: "C", target: "B", weight: -2 },
+              { source: "C", target: "D", weight: 4 }
+            ]
+          }
+        }
+      },
+      {
+        heading: "4. Deep Dive: Depth-First Search (DFS)",
+        body: "DFS is essential for exploring all paths, finding cycles, and solving puzzles. It uses recursion or a stack to go as deep as possible before backtracking.",
+        codeExample: "def dfs(graph, node, visited=None):\n    if visited is None: visited = set()\n    visited.add(node)\n    print(f\"Visited: {node}\")\n    for neighbor in graph[node]:\n        if neighbor not in visited:\n            dfs(graph, neighbor, visited)",
+        visualData: {
+          type: "graph",
+          label: "DFS Traversal Animation",
+          algorithm: "dfs",
+          startNode: "A",
+          data: {
+            nodes: [{ id: "A" }, { id: "B" }, { id: "C" }, { id: "D" }, { id: "E" }],
+            edges: [
+              { source: "A", target: "B", weight: 1 },
+              { source: "A", target: "C", weight: 1 },
+              { source: "B", target: "D", weight: 1 },
+              { source: "B", target: "E", weight: 1 }
+            ]
+          }
+        }
+      },
+      {
+        heading: "5. Shortest Paths: Dijkstra's Algorithm",
+        body: "Dijkstra's algorithm is the gold standard for shortest paths in non-negative weighted graphs. It's used in GPS, network routing (OSPF), and more.",
+        codeExample: "import heapq\n\ndef dijkstra(graph, start):\n    distances = {node: float('infinity') for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    while pq:\n        curr_d, curr_n = heapq.heappop(pq)\n        if curr_d > distances[curr_n]: continue\n        for neighbor, weight in graph[curr_n].items():\n            dist = curr_d + weight\n            if dist < distances[neighbor]:\n                distances[neighbor] = dist\n                heapq.heappush(pq, (dist, neighbor))\n    return distances",
+        visualData: {
+          type: "graph",
+          label: "Dijkstra's Pathfinding Animation",
+          algorithm: "dijkstra",
+          startNode: "A",
+          data: {
+            nodes: [{ id: "A" }, { id: "B" }, { id: "C" }, { id: "D" }, { id: "E" }],
+            edges: [
+              { source: "A", target: "B", weight: 4 },
+              { source: "A", target: "C", weight: 2 },
+              { source: "B", target: "C", weight: 3 },
+              { source: "B", target: "D", weight: 2 },
+              { source: "C", target: "B", weight: 1 },
+              { source: "C", target: "D", weight: 4 },
+              { source: "C", target: "E", weight: 5 },
+              { source: "D", target: "E", weight: 1 }
+            ]
+          }
+        }
+      },
+      {
+        heading: "6. Dynamic Programming (DP)",
+        body: "DP solves complex problems by breaking them into overlapping subproblems and storing results (memoization) to avoid redundant work.",
+        codeExample: "# 1. Fibonacci with Memoization\ndef fib_memo(n, memo={}):\n    if n <= 1: return n\n    if n not in memo: memo[n] = fib_memo(n-1) + fib_memo(n-2)\n    return memo[n]\n\n# 2. Knapsack Problem (0/1)\ndef knapsack(weights, values, capacity):\n    n = len(weights)\n    dp = [[0] * (capacity + 1) for _ in range(n + 1)]\n    for i in range(1, n + 1):\n        for w in range(1, capacity + 1):\n            if weights[i-1] <= w:\n                dp[i][w] = max(values[i-1] + dp[i-1][w-weights[i-1]], dp[i-1][w])\n            else:\n                dp[i][w] = dp[i-1][w]\n    return dp[n][capacity]",
+        visualData: {
+          type: "flowchart",
+          label: "DP vs Recursion",
+          data: {
+            nodes: [
+              { id: "rec", type: "start", label: "Recursive Call" },
+              { id: "check", type: "action", label: "Known Result?" },
+              { id: "calc", type: "action", label: "Calculate & Store" },
+              { id: "ret", type: "end", label: "Return Stored" }
+            ],
+            edges: [
+              { from: "rec", to: "check", label: "Start" },
+              { from: "check", to: "ret", label: "Yes" },
+              { from: "check", to: "calc", label: "No" },
+              { from: "calc", to: "ret", label: "Finish" }
+            ]
+          }
+        }
+      },
+      {
+        heading: "7. Cryptography & Security",
+        body: "Security algorithms ensure data integrity, authenticity, and confidentiality through mathematical transformations.",
+        codeExample: "# 1. Basic RSA Logic (Conceptual)\ndef rsa_concept(msg, e, n):\n    # Encryption: c = (m^e) % n\n    return pow(msg, e, n)\n\n# 2. Secure Hashing (SHA-256)\nimport hashlib\ndef get_sha256(text):\n    return hashlib.sha256(text.encode()).hexdigest()",
+        visualData: {
+          type: "flowchart",
+          label: "Public Key Encryption",
+          data: {
+            nodes: [
+              { id: "plain", type: "start", label: "Plaintext" },
+              { id: "pub", type: "action", label: "Encrypt with Public Key" },
+              { id: "cipher", type: "action", label: "Ciphertext" },
+              { id: "priv", type: "end", label: "Decrypt with Private Key" }
+            ],
+            edges: [
+              { from: "plain", to: "pub", label: "Lock" },
+              { from: "pub", to: "cipher", label: "Transmit" },
+              { from: "cipher", to: "priv", label: "Unlock" }
+            ]
+          }
+        }
+      },
+      {
+        heading: "8. Machine Learning & Data",
+        body: "ML algorithms rely on optimization and statistical grouping to learn from data patterns.",
+        codeExample: "# 1. Gradient Descent (Simple Linear)\ndef gradient_descent(x, y, lr=0.01, epochs=100):\n    m, c = 0, 0\n    n = len(x)\n    for _ in range(epochs):\n        y_pred = m * x + c\n        dm = (-2/n) * sum(x * (y - y_pred))\n        dc = (-2/n) * sum(y - y_pred)\n        m -= lr * dm\n        c -= lr * dc\n    return m, c",
+        visualData: {
+          type: "flowchart",
+          label: "ML Workflow",
+          data: {
+            nodes: [
+              { id: "data", type: "start", label: "Dataset" },
+              { id: "train", type: "action", label: "Training Phase" },
+              { id: "opt", type: "action", label: "Optimization (GD)" },
+              { id: "model", type: "end", label: "Predictive Model" }
+            ],
+            edges: [
+              { from: "data", to: "train", label: "Input" },
+              { from: "train", to: "opt", label: "Update Weights" },
+              { from: "opt", to: "train", label: "Iterate" },
+              { from: "opt", to: "model", label: "Converged" }
+            ]
+          }
+        }
+      },
+      {
+        heading: "9. Real-World Applications",
+        body: "Algorithms implemented in the wild: from file compression to task scheduling in operating systems.",
+        codeExample: "# 1. Huffman Coding (Compression Logic)\ndef huffman_node(char, freq):\n    return {'char': char, 'freq': freq, 'left': None, 'right': None}\n\n# 2. KMP String Matching - O(n + m)\ndef kmp_search(text, pattern):\n    # Uses failure function (LPS array) to skip unnecessary checks\n    pass",
+        visualData: {
+          type: "flowchart",
+          label: "Compression Flow",
+          data: {
+            nodes: [
+              { id: "raw", type: "start", label: "Raw Data" },
+              { id: "huff", type: "action", label: "Huffman Encoding" },
+              { id: "bin", type: "action", label: "Binary Stream" },
+              { id: "dec", type: "end", label: "Lossless Decompression" }
+            ],
+            edges: [
+              { from: "raw", to: "huff", label: "Analyze Freq" },
+              { from: "huff", to: "bin", label: "Compress" },
+              { from: "bin", to: "dec", label: "Store/Send" }
+            ]
+          }
+        }
       }
     ]
   },

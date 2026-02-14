@@ -12,6 +12,8 @@ import ListOperationVisualizer from './Visualizer/ListOperationVisualizer';
 import { DictionaryVisualizer } from './Visualizer/DictionaryVisualizer';
 import NestedDictionaryVisualizer, { NestedDictionaryData } from './Visualizer/NestedDictionaryVisualizer';
 import { FlowchartVisualizer } from './Visualizer/FlowchartVisualizer';
+import SearchVisualizer from './Visualizer/SearchVisualizer';
+import GraphVisualizer from './Visualizer/GraphVisualizer';
 import { useProgress } from '@/context/ProgressContext';
 
 interface TopicContentProps {
@@ -67,6 +69,20 @@ export default function TopicContent({ topic, prevTopic, nextTopic }: TopicConte
             <NestedListVisualizer
                 data={(topic.visualData?.data as unknown) as any[][]}
                 label={topic.visualData?.label || "Matrix Visualization"}
+            />
+        ) : topic.visualType === 'search' && topic.visualData ? (
+            <SearchVisualizer
+                data={topic.visualData.data}
+                target={topic.visualData.target ?? 0}
+                label={topic.visualData.label}
+            />
+        ) : topic.visualType === 'graph' && topic.visualData ? (
+            <GraphVisualizer
+                data={topic.visualData.data}
+                algorithm={topic.visualData.algorithm ?? "bfs"}
+                startNode={topic.visualData.startNode ?? "A"}
+                endNode={topic.visualData.endNode}
+                label={topic.visualData.label}
             />
         ) : (
             <ArrayVisualizer
@@ -168,7 +184,7 @@ export default function TopicContent({ topic, prevTopic, nextTopic }: TopicConte
                                     )}
 
                                     {section.visualData && (
-                                        <div className="my-12 p-8 bg-zinc-900 rounded-[2.5rem] border-2 border-zinc-800 shadow-2xl shadow-black/50 overflow-hidden">
+                                        <div className="my-12 p-0 sm:p-2 lg:p-6 bg-zinc-900 rounded-xl border-2 border-zinc-800 shadow-2xl shadow-black/50 overflow-hidden">
                                             <div className={`${section.visualData.type === 'nested' ? 'min-h-[520px]' : 'min-h-[280px]'} w-full flex items-center justify-center`}>
                                                 {section.visualData.type === 'array' ? (
                                                     <ArrayVisualizer
@@ -191,6 +207,20 @@ export default function TopicContent({ topic, prevTopic, nextTopic }: TopicConte
                                                     <SlicingVisualizer
                                                         data={section.visualData.data}
                                                         sliceRange={section.visualData.highlightIndices as [number, number]}
+                                                        label={section.visualData.label}
+                                                    />
+                                                ) : section.visualData.type === 'search' ? (
+                                                    <SearchVisualizer
+                                                        data={section.visualData.data}
+                                                        target={section.visualData.target ?? 0}
+                                                        label={section.visualData.label}
+                                                    />
+                                                ) : section.visualData.type === 'graph' ? (
+                                                    <GraphVisualizer
+                                                        data={section.visualData.data}
+                                                        algorithm={section.visualData.algorithm ?? "bfs"}
+                                                        startNode={section.visualData.startNode ?? "A"}
+                                                        endNode={section.visualData.endNode}
                                                         label={section.visualData.label}
                                                     />
                                                 ) : section.visualData.type === 'dictionary' ? (

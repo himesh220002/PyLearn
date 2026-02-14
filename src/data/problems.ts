@@ -8,7 +8,7 @@ export type ProblemTest = {
 export type Problem = {
   id: string;
   title: string;
-  difficulty: "beginner" | "intermediate";
+  difficulty: "beginner" | "intermediate" | "advanced";
   topicId: string; // Links to the topic this problem belongs to
   order: number; // Order within the topic (1, 2, 3...)
   description: string;
@@ -1233,6 +1233,142 @@ export const problems: Problem[] = [
     ],
     solutionOutline: "Calculate weighted sum. Add bias. Return max(0, total).",
     solutionCode: "def neuron(inputs, weights, bias):\n    total = sum(i * w for i, w in zip(inputs, weights)) + bias\n    return total if total > 0 else 0",
+  },
+  {
+    id: "binary_search_impl",
+    title: "Binary Search Implementation",
+    difficulty: "advanced",
+    topicId: "essential-algorithms",
+    order: 1,
+    description: "Write a function `binary_search(arr, target)` that returns the index of the target in a sorted list, or -1 if not found. Use the efficient O(log n) approach.",
+    examples: ["binary_search([10, 20, 30, 40, 50], 30) -> 2", "binary_search([1, 2, 3], 5) -> -1"],
+    starterCode: "def binary_search(arr, target):\n    \"\"\"Implement binary search on a sorted list.\"\"\"\n    # TODO: implement O(log n) search logic\n    pass\n",
+    tests: [
+      {
+        id: "bs-1",
+        description: "Finds element in the middle.",
+        inputDescription: "arr = [10, 20, 30, 40, 50], target = 30",
+        expectedDescription: "Returns 2",
+      },
+      {
+        id: "bs-2",
+        description: "Target not in list.",
+        inputDescription: "arr = [1, 2, 3], target = 5",
+        expectedDescription: "Returns -1",
+      },
+    ],
+    functionName: "binary_search",
+    hints: [
+      "Use two pointers: low and high.",
+      "Calculate the middle index: (low + high) // 2.",
+      "If mid value is too low, move the low pointer up."
+    ],
+    solutionOutline: "Initialize low=0 and high=len(arr)-1. While low <= high, find the middle. If arr[mid] is the target, return mid. If it's less than target, search the right half; otherwise, search the left half.",
+    solutionCode: "def binary_search(arr, target):\n    low, high = 0, len(arr) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1",
+  },
+  {
+    id: "quick_sort_impl",
+    title: "Divide and Conquer: Quick Sort",
+    difficulty: "advanced",
+    topicId: "essential-algorithms",
+    order: 2,
+    description: "Implement the Quick Sort algorithm. Given a list of numbers, return a new sorted list using the recursive divide-and-conquer approach.",
+    examples: ["quick_sort([3, 1, 4, 1, 5, 9, 2]) -> [1, 1, 2, 3, 4, 5, 9]"],
+    starterCode: "def quick_sort(arr):\n    \"\"\"Sort the list using Quick Sort algorithm.\"\"\"\n    # TODO: implement recursive quick sort\n    pass\n",
+    tests: [
+      {
+        id: "qs-1",
+        description: "Sorts a mixed list.",
+        inputDescription: "arr = [3, 1, 4, 1, 5, 9, 2]",
+        expectedDescription: "[1, 1, 2, 3, 4, 5, 9]",
+      },
+    ],
+    functionName: "quick_sort",
+    hints: [
+      "Base case: a list with 0 or 1 element is already sorted.",
+      "Pick a pivot element and split the remaining items into 'less than' and 'greater than' lists.",
+      "Recursively call quick_sort on the sub-lists."
+    ],
+    solutionOutline: "Use the classic recursive pattern: return quick_sort(less) + pivot + quick_sort(greater). Ensure you handle the base case to avoid infinite recursion.",
+    solutionCode: "def quick_sort(arr):\n    if len(arr) <= 1: return arr\n    pivot = arr[len(arr) // 2]\n    left = [x for x in arr if x < pivot]\n    middle = [x for x in arr if x == pivot]\n    right = [x for x in arr if x > pivot]\n    return quick_sort(left) + middle + quick_sort(right)",
+  },
+  {
+    id: "bfs_shortest_path",
+    title: "Social Network BFS",
+    difficulty: "advanced",
+    topicId: "essential-algorithms",
+    order: 3,
+    description: "Find the shortest path distance (number of edges) between two nodes in an adjacency list graph using BFS. Return -1 if no path exists.",
+    examples: ["bfs({'A': ['B'], 'B': ['C'], 'C': []}, 'A', 'C') -> 2"],
+    starterCode: "from collections import deque\n\ndef shortest_path(graph, start, end):\n    \"\"\"Return the shortest distance from start to end.\"\"\"\n    # TODO: implement BFS to find the distance\n    pass\n",
+    tests: [
+      {
+        id: "bfs-1",
+        description: "End is 2 steps away.",
+        inputDescription: "graph={'A': ['B'], 'B': ['C'], 'C': []}, start='A', end='C'",
+        expectedDescription: "2",
+      },
+    ],
+    functionName: "shortest_path",
+    hints: [
+      "Queue should store (node, current_distance) pairs.",
+      "Keep track of visited nodes to avoid cycles.",
+      "First time you reach the 'end' node, it's guaranteed to be the shortest path."
+    ],
+    solutionOutline: "Initialize a queue with (start, 0) and a visited set. Pop from queue, check neighbors. If neighbor is end, return distance + 1; otherwise, add to queue if not visited.",
+    solutionCode: "from collections import deque\n\ndef shortest_path(graph, start, end):\n    if start == end: return 0\n    queue = deque([(start, 0)])\n    visited = {start}\n    while queue:\n        node, dist = queue.popleft()\n        for neighbor in graph.get(node, []):\n            if neighbor == end: return dist + 1\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append((neighbor, dist + 1))\n    return -1",
+  },
+  {
+    id: "knapsack_dp",
+    title: "The Knapsack Problem",
+    difficulty: "advanced",
+    topicId: "essential-algorithms",
+    order: 4,
+    description: "Write a function `knapsack(weights, values, capacity)` that returns the maximum value that can fit into the given capacity using 0/1 logic (use DP).",
+    examples: ["knapsack([1, 2, 3], [10, 15, 40], 4) -> 50"],
+    starterCode: "def knapsack(weights, values, capacity):\n    \"\"\"Return the maximum value for the given capacity.\"\"\"\n    # TODO: implement 0/1 knapsack using dynamic programming\n    pass\n",
+    tests: [
+      {
+        id: "ks-1",
+        description: "Optimal choice is items 1 and 3.",
+        inputDescription: "weights=[1, 2, 3], values=[10, 15, 40], capacity=4",
+        expectedDescription: "50",
+      },
+    ],
+    functionName: "knapsack",
+    hints: [
+      "Create a 2D DP table: rows for items, columns for current capacity.",
+      "Iterate through items and capacities.",
+      "Decide: include item (val + leftovers) or exclude item (prev best)."
+    ],
+    solutionOutline: "Build a DP table of size (n+1) x (W+1). For each item i and weight w, if item fits, take max of including it or excluding it. The final answer is at the bottom-right of the table.",
+    solutionCode: "def knapsack(weights, values, capacity):\n    n = len(weights)\n    dp = [[0] * (capacity + 1) for _ in range(n + 1)]\n    for i in range(1, n + 1):\n        for w in range(1, capacity + 1):\n            if weights[i-1] <= w:\n                dp[i][w] = max(values[i-1] + dp[i-1][w-weights[i-1]], dp[i-1][w])\n            else:\n                dp[i][w] = dp[i-1][w]\n    return dp[n][capacity]",
+  },
+  {
+    id: "huffman_compression",
+    title: "Huffman Tree Frequencies",
+    difficulty: "advanced",
+    topicId: "essential-algorithms",
+    order: 5,
+    description: "Implement the frequency map part of Huffman Compression. Given a string, return a dictionary mapping each character to its frequency count.",
+    examples: ["huffman_freq('aabbc') -> {'a': 2, 'b': 2, 'c': 1}"],
+    starterCode: "def huffman_freq(text):\n    \"\"\"Return frequency map for the text.\"\"\"\n    # TODO: count occurrences of each character\n    pass\n",
+    tests: [
+      {
+        id: "hf-1",
+        description: "Standard frequency count.",
+        inputDescription: "text='aabbc'",
+        expectedDescription: "{'a': 2, 'b': 2, 'c': 1}",
+      },
+    ],
+    functionName: "huffman_freq",
+    hints: [
+      "Initialize an empty dictionary.",
+      "Loop through each character in the text.",
+      "Update the count in the dictionary for each character."
+    ],
+    solutionOutline: "This is a basic frequency map problem that serves as the first step for Huffman coding. Use a dictionary to store counts as you iterate through the string.",
+    solutionCode: "def huffman_freq(text):\n    freq = {}\n    for char in text:\n        freq[char] = freq.get(char, 0) + 1\n    return freq",
   },
 ];
 

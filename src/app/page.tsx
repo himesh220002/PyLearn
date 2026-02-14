@@ -110,12 +110,17 @@ const learningPath = [
   {
     level: "Beginner",
     description: "Start here if you're new to coding.",
-    topics: ["Variables", "Data Types", "Conditionals", "Functions", "Lists", "Loops"]
+    topics: ["Variables", "Data Types", "Conditionals", "Functions", "Lists", "Loops", "Tuples", "Dictionaries", "Scope"]
   },
   {
     level: "Intermediate",
     description: "Deepen your knowledge.",
-    topics: ["List Comprehensions", "Dictionaries", "File I/O", "OOP", "Error Handling"]
+    topics: ["List Comprehensions", "Iterators", "Generators", "Functional Tools", "Advanced Data Structures", "File I/O", "Modules", "Error Handling"]
+  },
+  {
+    level: "Advanced",
+    description: "Master complex Python systems.",
+    topics: ["Advanced OOP", "REST APIs", "Unit Testing", "Pythonic Refactoring", "JSON/CSV", "Machine Learning Intro"]
   },
 ];
 
